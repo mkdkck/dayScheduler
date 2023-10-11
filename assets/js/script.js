@@ -1,23 +1,61 @@
-// Wrap all code that interacts with the DOM in a call to jQuery to ensure that
-// the code isn't run until the browser has finished rendering all the elements
-// in the html.
-$(function () {
-  // TODO: Add a listener for click events on the save button. This code should
-  // use the id in the containing time-block as a key to save the user input in
-  // local storage. HINT: What does `this` reference in the click listener
-  // function? How can DOM traversal be used to get the "hour-x" id of the
-  // time-block containing the button that was clicked? How might the id be
-  // useful when saving the description in local storage?
-  //
-  // TODO: Add code to apply the past, present, or future class to each time
-  // block by comparing the id to the current hour. HINTS: How can the id
-  // attribute of each time-block be used to conditionally add or remove the
-  // past, present, and future classes? How can Day.js be used to get the
-  // current hour in 24-hour time?
-  //
-  // TODO: Add code to get any user input that was saved in localStorage and set
-  // the values of the corresponding textarea elements. HINT: How can the id
-  // attribute of each time-block be used to do this?
-  //
-  // TODO: Add code to display the current date in the header of the page.
+var saveBtn = $('.saveBtn');
+var currentTime = dayjs();
+var currentHour = dayjs().format ('HH');
+var scheduleContent ="";
+
+$('#currentDay').text(currentTime.format('dddd, MMMM D YYYY, h:mm:ss a'));
+
+// set loop to test if the current time vs schedule time, asign class automatically.
+for (var i=9; i<18; i++) {
+  var columnID = "#hour-"+ i;
+  if (currentHour > i) {
+    $ (columnID).addClass ('past');
+  } else if (currentHour === i) {
+    $ (columnID).addClass ('present');
+  } else {
+    $ (columnID).addClass ('future');
+  }
+}
+
+$(function(){
+  // function to show the notification about data saved to the local storage, using show widget, hide after 1.5sec.
+  saveBtn.on ("click",function(){
+    $( "#savedNotice" ).show("blind", 500, callback);
+  });
+  
+  function callback() {
+    setTimeout(function() {
+      $( "#savedNotice:visible" ).removeAttr( "style" ).fadeOut();
+    }, 1500 );
+  };
+  
+  $( "#savedNotice" ).hide(); 
+})
+
+saveBtn.on ("click",function(){
+scheduleContent = $(this).siblings('textarea').val();
+localStorage.setItem($(this).parent().attr('id'), scheduleContent);
+renderPage();
 });
+
+function renderPage(){
+  for (var i=9; i<18; i++) {
+    var ID ="hour-"+ i ;
+    var columnID = "#hour-"+ i;
+    var timeSchedule = localStorage.getItem(ID);
+
+    if (timeSchedule === null) {
+    } else {
+      $(columnID).children().eq(1).text(timeSchedule);
+    }
+    
+  }
+}
+
+renderPage();
+  
+  
+
+  
+
+  
