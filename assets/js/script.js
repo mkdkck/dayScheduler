@@ -10,7 +10,7 @@ for (var i=9; i<18; i++) {
   var columnID = "#hour-"+ i;
   if (currentHour > i) {
     $ (columnID).addClass ('past');
-  } else if (currentHour === i) {
+  } else if (currentHour == i) {
     $ (columnID).addClass ('present');
   } else {
     $ (columnID).addClass ('future');
@@ -18,11 +18,16 @@ for (var i=9; i<18; i++) {
 }
 
 $(function(){
-  // function to show the notification about data saved to the local storage, using show widget, hide after 1.5sec.
   saveBtn.on ("click",function(){
+    // function to show the notification about data saved to the local storage, using show widget, hide after 1.5sec.
+    // using jQuery Widget "show".
     $( "#savedNotice" ).show("blind", 500, callback);
+    // save the text into local storage
+    scheduleContent = $(this).siblings('textarea').val();
+    localStorage.setItem($(this).parent().attr('id'), scheduleContent);
   });
   
+  //a callback function to hide the notice bar after 1.5seconds.
   function callback() {
     setTimeout(function() {
       $( "#savedNotice:visible" ).removeAttr( "style" ).fadeOut();
@@ -32,12 +37,7 @@ $(function(){
   $( "#savedNotice" ).hide(); 
 })
 
-saveBtn.on ("click",function(){
-scheduleContent = $(this).siblings('textarea').val();
-localStorage.setItem($(this).parent().attr('id'), scheduleContent);
-renderPage();
-});
-
+// a function to get the schedules from the local storage, show it on the page.
 function renderPage(){
   for (var i=9; i<18; i++) {
     var ID ="hour-"+ i ;
